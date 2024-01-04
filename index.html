@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comment System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .comments-container {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .comment {
+            margin-bottom: 20px;
+        }
+
+        .comment-text {
+            margin-bottom: 10px;
+        }
+
+        .comment-actions {
+            display: flex;
+            align-items: center;
+        }
+
+        .comment-edit,
+        .comment-reply,
+        .comment-delete {
+            margin-left: 10px;
+            color: blue;
+            cursor: pointer;
+        }
+
+        .comment-reply {
+            margin-left: 30px; /* Add indentation for replies */
+        }
+
+        .comment-reply .comment-text {
+            color: black; /* Set the text color for reply text to black */
+        }
+        
+        .comment-input {
+            width: 100%;
+            padding: 5px;
+            margin-bottom: 10px;
+        }
+
+        .comment-save {
+            background-color: #4caf50;
+            color: #fff;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
+        .comment-save:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+
+<div class="comments-container">
+    <div class="comment" id="comment1">
+        <div class="comment-actions">
+            <span class="comment-edit" onclick="edit('comment1', 'This is the first comment.')"></span>
+            <span class="comment-reply" onclick="reply('comment1')"></span>
+            <span class="comment-delete" onclick="remove('comment1')"></span>
+        </div>
+    </div>
+
+    <div class="comment-reply" id="reply1">
+        
+        <div class="comment-actions">
+            <span class="comment-edit" onclick="edit('reply1', 'This is a reply.')"></span>
+            <span class="comment-reply" onclick="reply('reply1')"></span>
+            <span class="comment-delete" onclick="remove('reply1')"></span>
+        </div>
+    </div>
+
+    <div class="comment">
+        <input type="text" class="comment-input" id="newComment" placeholder="Enter your comment">
+        <button class="comment-save" onclick="addComment()">Add Comment</button>
+    </div>
+</div>
+
+<script>
+    function edit(elementId, currentText) {
+        var newText = prompt("Edit your comment:", currentText);
+
+        if (newText !== null) {
+            document.getElementById(elementId).getElementsByClassName('comment-text')[0].innerText = newText;
+        }
+    }
+
+    function reply(parentId) {
+        var newText = prompt("Reply to this comment:");
+
+        if (newText !== null) {
+            var newReplyDiv = document.createElement('div');
+            newReplyDiv.className = 'comment-reply';
+
+            var replyTextDiv = document.createElement('div');
+            replyTextDiv.className = 'comment-text';
+            replyTextDiv.innerText = newText;
+
+            var replyActionsDiv = document.createElement('div');
+            replyActionsDiv.className = 'comment-actions';
+
+            var replyEditSpan = document.createElement('span');
+            replyEditSpan.className = 'comment-edit';
+            replyEditSpan.innerText = 'Edit';
+            replyEditSpan.onclick = function () {
+                edit(newReplyDiv.id, newText);
+            };
+
+            var replyReplySpan = document.createElement('span');
+            replyReplySpan.className = 'comment-reply';
+            replyReplySpan.innerText = 'Reply';
+            replyReplySpan.onclick = function () {
+                reply(newReplyDiv.id);
+            };
+
+            var replyDeleteSpan = document.createElement('span');
+            replyDeleteSpan.className = 'comment-delete';
+            replyDeleteSpan.innerText = 'Delete';
+            replyDeleteSpan.onclick = function () {
+                remove(newReplyDiv.id);
+            };
+
+            replyActionsDiv.appendChild(replyTextDiv);
+            replyActionsDiv.appendChild(replyEditSpan);
+            replyActionsDiv.appendChild(replyReplySpan);
+            replyActionsDiv.appendChild(replyDeleteSpan);
+
+            newReplyDiv.appendChild(replyActionsDiv);
+
+            newReplyDiv.id = 'reply' + (document.getElementsByClassName('comment-reply').length + 1);
+
+            var parentComment = document.getElementById(parentId);
+            parentComment.appendChild(newReplyDiv);
+        }
+    }
+
+    function remove(elementId) {
+        var element = document.getElementById(elementId);
+        if (element) {
+            element.parentNode.removeChild(element);
+        }
+    }
+
+    function addComment() {
+        var newCommentText = document.getElementById('newComment').value;
+
+        if (newCommentText.trim() !== '') {
+            var newCommentDiv = document.createElement('div');
+            newCommentDiv.className = 'comment';
+
+            var commentTextDiv = document.createElement('div');
+            commentTextDiv.className = 'comment-text';
+            commentTextDiv.innerText = newCommentText;
+
+            var commentActionsDiv = document.createElement('div');
+            commentActionsDiv.className = 'comment-actions';
+
+            var commentEditSpan = document.createElement('span');
+            commentEditSpan.className = 'comment-edit';
+            commentEditSpan.innerText = 'Edit';
+            commentEditSpan.onclick = function () {
+                edit(newCommentDiv.id, newCommentText);
+            };
+
+            var commentReplySpan = document.createElement('span');
+            commentReplySpan.className = 'comment-reply';
+            commentReplySpan.innerText = 'Reply';
+            commentReplySpan.onclick = function () {
+                reply(newCommentDiv.id);
+            };
+
+            var commentDeleteSpan = document.createElement('span');
+            commentDeleteSpan.className = 'comment-delete';
+            commentDeleteSpan.innerText = 'Delete';
+            commentDeleteSpan.onclick = function () {
+                remove(newCommentDiv.id);
+            };
+
+            commentActionsDiv.appendChild(commentEditSpan);
+            commentActionsDiv.appendChild(commentReplySpan);
+            commentActionsDiv.appendChild(commentDeleteSpan);
+
+            newCommentDiv.appendChild(commentTextDiv);
+            newCommentDiv.appendChild(commentActionsDiv);
+
+            newCommentDiv.id = 'comment' + (document.getElementsByClassName('comment').length + 1);
+
+            document.querySelector('.comments-container').insertBefore(newCommentDiv, document.querySelector('.comment'));
+
+            document.getElementById('newComment').value = '';
+        }
+    }
+</script>
+
+</body>
+</html>
